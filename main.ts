@@ -297,15 +297,15 @@ function parseTweet(
   const mediaKeys = attachments?.media_keys;
   const author = users?.find((u) => u.id === tweetInfo.author_id);
   const mediaForTweet = media?.filter((m) => mediaKeys?.includes(m.media_key));
-  const url = author.username
+  const url = author ? (author.username
     ? "https://twitter.com/" + author.username + "/status/" + tweetInfo.id
-    : undefined;
+    : undefined): undefined;
   const transformedText = parseTweetText(text);
   return {
     ...tweetInfo,
     text: transformedText,
     ...public_metrics,
-    author: parseUser(author),
+    author: author ? parseUser(author) : {},
     media: mediaForTweet?.map(parseMedia),
     url,
   };
@@ -322,7 +322,7 @@ function parseUser(
   { pinnedTweetId }: UserAnnotationInfo = {}
 ) {
   return {
-    profile_image_url: transformProfileImage(profile_image_url),
+    profile_image_url: transformProfileImage(profile_image_url ?? ""),
     ...userInfo,
     pinnedTweetId,
     ...public_metrics,
